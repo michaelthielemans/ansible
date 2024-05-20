@@ -1,5 +1,5 @@
 - name: test playbook
-  hosts: vm
+  hosts: all
   tasks:
   - name: Update repositories cache and install "htop" package
     ansible.builtin.apt:
