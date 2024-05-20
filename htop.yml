@@ -1,7 +1,23 @@
-- name: test playbook
+- name: test
   hosts: all
+  become: yes
   tasks:
-  - name: Update repositories cache and install "htop" package
-    ansible.builtin.apt:
-      name: htop
-      update_cache: yes
+    # Upgrade packages
+    - name: upgrade apt packages
+      become: true
+      apt:
+        upgrade: yes
+        update_cache: yes
+
+    - name: Update repositories cache and install "htop" package
+      become: true
+      ansible.builtin.apt:
+        name: htop
+        update_cache: yes
+
+    # Check if reboot is required
+    - name: check if system reboot is required
+      become: true
+      stat:
+        path: /var/run/reboot-required
+      register: reboot_required
