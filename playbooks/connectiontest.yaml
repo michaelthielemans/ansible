@@ -1,0 +1,3 @@
+- name: Test reachability
+  ansible.netcommon.net_ping:
+    dest: 172.24.1.51
