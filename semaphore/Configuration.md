@@ -22,7 +22,7 @@ This can be done on you local machine or on the semaphore server itself, it does
   > Is optional if you use a passphrase you need to add this passphrase to the semaphore ui when entering a new ssh key
 
 #### 2.1.B. Copy the public part of the keypair to the remote targets
-`ssh-copy-id -i ~/.ssh/id_rsa.pub master@172.24.1.105
+`ssh-copy-id -i ~/.ssh/id_rsa.pub master@172.24.1.105`
 > copy the pub key to the authorizers of the master
 > After finishing this command the pub key will be added to the /home/master/.ssh/authorized_keys file. It will copy the key to the home dir location of the users from where you started the ssh session
 > -> If a machine will connect to the remote with a ssh key, the remote will check if he has a corresponding public key available in one of his authorized_keys files. Depending on the location of this public key the session will be bound to that user.
