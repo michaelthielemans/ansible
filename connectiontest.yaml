@@ -1,2 +1,5 @@
-- name: Run hostname command
-  ansible.builtin.command: hostname
+- name: test
+  hosts: all
+  tasks:
+    - name: Run hostname command
+      ansible.builtin.command: hostname
