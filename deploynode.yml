@@ -8,9 +8,6 @@
         sudo ufw allow 6443
         sudo ufw reload
 
-    - name: Execute a script
-      script: /path/to/local/script.sh
-
     - name: Install a package
       apt:
         name: nfs-common
