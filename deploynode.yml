@@ -2,6 +2,7 @@
 - name: Run commands on target servers
   hosts: all
   become: yes
+  become_method: sudo
   tasks:
     - name: Run a shell command
       shell: |
