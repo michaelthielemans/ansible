@@ -1,0 +1,14 @@
+- name: create-users
+  hosts: all
+  become: yes
+  tasks:
+  - name: Add the user 'michael'
+    ansible.builtin.user:
+      name: michael
+      comment: Michael Thielemans
+      group: admin
+  - name: Add the user 'Dieter'
+    ansible.builtin.user:
+      name: dieter
+      comment: dieter
+      group: admin
