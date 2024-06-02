@@ -21,17 +21,38 @@
         net.ipv4.ip_forward = 1 EOF
         sysctl --system
         modprobe br_netfilter
-        cd /usr/local
-        wget https://github.com/containerd/containerd/releases/download/v1.7.15/containerd-1.7.15-linux-amd64.tar.gz
-        tar Cxzvf /usr/local containerd-1.7.15-linux-amd64.tar.gz
-        cd /usr/lib/systemd/system/
-        wget https://raw.githubusercontent.com/containerd/containerd/main/containerd.service
-        systemctl daemon-reload
-        systemctl enable --now containerd
-        cd /usr/local
-        wget https://github.com/opencontainers/runc/releases/download/v1.1.12/runc.amd64
-        install -m 755 runc.amd64 /usr/local/sbin/runc
-        mkdir /etc/containerd
-        touch /etc/containerd/config.toml
-        chmod 777 /etc/containerd/config.toml
-        containerd config default > /etc/containerd/config.toml
+        
+    - name: Download containerd
+      get_url:
+        url: https://github.com/containerd/containerd/releases/download/v1.7.15/containerd-1.7.15-linux-amd64.tar.gz
+        dest: /usr/local
+     
+    - name: unpack the containerd package
+      command: tar Cxzvf /usr/local containerd-1.7.15-linux-amd64.tar.gz
+        
+    - name: download containerd service
+      get_url:
+        url: https://raw.githubusercontent.com/containerd/containerd/main/containerd.service
+        dest: /usr/lib/systemd/system/
+     
+    - name: reload the systemctl deamon and enable systemd
+      shell: systemctl daemon-reload
+     
+    - name: start en enable the containerd service
+      service:
+        name: containerd
+        enabled: yes
+        state: started
+        
+    - name: download runc
+      get_url:
+        url: wget https://github.com/opencontainers/runc/releases/download/v1.1.12/runc.amd64
+
+    - name: install runc
+      shell: install -m 755 runc.amd64 /usr/local/sbin/runc
+
+    - name: Create containerd directory in /etc
+      file:
+        path: /etc/containerd
+        state: directory
+        mode: '0755'
