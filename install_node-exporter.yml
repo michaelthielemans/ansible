@@ -21,7 +21,7 @@
         wget "https://github.com/prometheus/node_exporter/releases/download/v1.8.1/node_exporter-1.8.1.linux-amd64.tar.gz"
   
     - name: Extract Node Exporter
-      command: tar Cxzvf /usr/local/bin/node_exporter-1.8.1.linux-amd64.tar.gz
+      command: tar xzf /usr/local/bin/node_exporter-1.8.1.linux-amd64.tar.gz
 
     #- name: rename directory
     #  command: mv /usr/local/bin/node_exporter /usr/local/bin/node_exporter
