@@ -4,6 +4,7 @@
   become: yes
   become_method: sudo
   tasks:
+    
     - name: Run a shell command
       shell: |
         sudo ufw allow 6443
@@ -11,10 +12,15 @@
 
     - name: Install a package
       apt:
-        name: nfs-common
+        name:
+          - nfs-common
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gpg
         state: present
         update_cache: yes
-      when: ansible_os_family == "Debian"
+      when: ansible_os_family == "Debian"   
 
     - name: Run a shell command
       shell: |
@@ -75,3 +81,52 @@
     
     - name: generate default configuration for config.toml
       shell: containerd config default > /etc/containerd/config.toml
+
+    - name: Ensure systemd_cgroup is set to true
+      lineinfile:
+        path: /path/to/your/config/file.conf
+        regexp: '^systemd_cgroup ='
+        line: 'systemd_cgroup = true'
+        state: present
+
+    - name: restart containerd
+      ansible.builtin.systemd_service:
+        name: containerd.service
+        state: restarted
+        
+    - name: install cni plugin
+      shell: |
+        cd /opt
+        wget https://github.com/containernetworking/plugins/releases/download/v1.4.1/cni-plugins-linux-amd64-v1.4.1.tgz
+        mkdir -p /opt/cni/bin
+        chown root:root cni/bin
+        tar Cxzvf /opt/cni/bin cni-plugins-linux-amd64-v1.4.1.tgz
+        
+- name: Add the repository key
+      apt_key:
+        url: 'https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key'
+        state: present
+
+    - name: Add the repository
+      apt_repository:
+        repo: 'deb https://pkgs.k8s.io/core:/stable:/v1.29/deb/'
+        state: present
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install packages
+      apt:
+        name:
+          - kubelet
+          - kubeadm
+          - kubectl
+        state: present
+
+    - name: start and enable the kubelet service
+      ansible.builtin.systemd_service:
+        name: kubelet
+        enabled: true
+        state: started
+    
