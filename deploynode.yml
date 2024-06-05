@@ -23,12 +23,15 @@
         sysctl --system
         modprobe br_netfilter
         
-    - name: Download containerd
-      ansible.builtin.get_url:
-        url: https://github.com/containerd/containerd/releases/download/v1.7.15/containerd-1.7.15-linux-amd64.tar.gz
-        dest: /tmp/containerd
-        mode: '0777'
-        validate_certs: false
+    - name: Download containerd with wget
+      command: wget -o /tmp https://github.com/containerd/containerd/releases/download/v1.7.15/containerd-1.7.15-linux-amd64.tar.gz
+    
+    #- name: Download containerd
+    #  ansible.builtin.get_url:
+    #    url: https://github.com/containerd/containerd/releases/download/v1.7.15/containerd-1.7.15-linux-amd64.tar.gz
+    #    dest: /tmp/containerd
+    #    mode: '0777'
+    #    validate_certs: false
      
     - name: unpack the containerd package
       command: tar Cxzvf /usr/local containerd-1.7.15-linux-amd64.tar.gz
