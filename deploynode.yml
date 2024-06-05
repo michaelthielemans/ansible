@@ -48,9 +48,9 @@
       shell: systemctl daemon-reload
      
     - name: start en enable the containerd service
-      service:
-        name: containerd
-        enabled: yes
+      ansible.builtin.systemd_service:
+        name: containerd.service
+        enabled: true
         state: started
         
     - name: download runc
