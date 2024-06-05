@@ -24,7 +24,7 @@
         modprobe br_netfilter
         
     - name: Download containerd with wget
-      command: wget -o /tmp/containerd-1.7.15-linux-amd64.tar.gz https://github.com/containerd/containerd/releases/download/v1.7.15/containerd-1.7.15-linux-amd64.tar.gz
+      command: wget -o /usr/local/containerd-1.7.15-linux-amd64.tar.gz https://github.com/containerd/containerd/releases/download/v1.7.15/containerd-1.7.15-linux-amd64.tar.gz
     
     #- name: Download containerd
     #  ansible.builtin.get_url:
@@ -36,10 +36,13 @@
     - name: unpack the containerd package
       command: tar Cxzvf /usr/local containerd-1.7.15-linux-amd64.tar.gz
         
-    - name: download containerd service
-      get_url:
-        url: https://raw.githubusercontent.com/containerd/containerd/main/containerd.service
-        dest: /usr/lib/systemd/system/
+    - name: download containerd service with wget
+      command: wget -o /usr/lib/systemd/system/containerd.service https://raw.githubusercontent.com/containerd/containerd/main/containerd.service
+    
+    #- name: download containerd service
+    #  get_url:
+    #    url: https://raw.githubusercontent.com/containerd/containerd/main/containerd.service
+    #    dest: /usr/lib/systemd/system/
      
     - name: reload the systemctl deamon and enable systemd
       shell: systemctl daemon-reload
@@ -51,8 +54,7 @@
         state: started
         
     - name: download runc
-      get_url:
-        url: wget https://github.com/opencontainers/runc/releases/download/v1.1.12/runc.amd64
+      command: wget -o /usr/local/runc.amd64 https://github.com/opencontainers/runc/releases/download/v1.1.12/runc.amd64
 
     - name: install runc
       shell: install -m 755 runc.amd64 /usr/local/sbin/runc
