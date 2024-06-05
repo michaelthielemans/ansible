@@ -16,13 +16,15 @@
         shell: /usr/sbin/nologin
 
     - name: Download Node Exporter
-      command: wget -o /tmp/node_exporter.tar.gz "https://github.com/prometheus/node_exporter/releases/download/v1.8.1/node_exporter-1.8.1.linux-amd64.tar.gz"
+      shell: | 
+        cd /usr/local/bin
+        wget "https://github.com/prometheus/node_exporter/releases/download/v1.8.1/node_exporter-1.8.1.linux-amd64.tar.gz"
   
     - name: Extract Node Exporter
-      command: tar Cxzvf /usr/local/bin /tmp/node_exporter-1.8.1.linux-amd64.tar.gz
+      command: tar Cxzvf /usr/local/bin/node_exporter-1.8.1.linux-amd64.tar.gz
 
-    - name: rename directory
-      command: mv /usr/local/bin/node_exporter-1.8.1.linux-amd64 /usr/local/bin/node_exporter
+    #- name: rename directory
+    #  command: mv /usr/local/bin/node_exporter /usr/local/bin/node_exporter
 
     - name: Set permissions on Node Exporter binary
       file:
