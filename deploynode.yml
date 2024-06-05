@@ -84,7 +84,7 @@
 
     - name: Ensure systemd_cgroup is set to true
       lineinfile:
-        path: /path/to/your/config/file.conf
+        path: /etc/containerd/config.toml
         regexp: '^systemd_cgroup ='
         line: 'systemd_cgroup = true'
         state: present
