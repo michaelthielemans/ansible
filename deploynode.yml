@@ -102,7 +102,7 @@
         chown root:root cni/bin
         tar Cxzvf /opt/cni/bin cni-plugins-linux-amd64-v1.4.1.tgz
         
-- name: Add the repository key
+    - name: Add the repository key
       apt_key:
         url: 'https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key'
         state: present
