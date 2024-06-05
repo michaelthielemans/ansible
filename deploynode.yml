@@ -27,7 +27,7 @@
       ansible.builtin.get_url:
         url: https://github.com/containerd/containerd/releases/download/v1.7.15/containerd-1.7.15-linux-amd64.tar.gz
         dest: /tmp/containerd
-        mdoe: '0777'
+        mode: '0777'
         validate_certs: no
      
     - name: unpack the containerd package
