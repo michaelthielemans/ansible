@@ -1,0 +1,25 @@
+---
+- name: Create a user with a password
+  hosts: all
+  become: yes
+  vars:
+    user_name: "new_user"
+    user_password: !vault |
+      $ANSIBLE_VAULT;1.1;AES256
+      316562643064376134316231343764333834663566366435343432356332653965356630313564336533633336653031666662313335326364323139306162370a613836666430633337323030386636616437633035623165316636313764313535336632323433643865343535613931623335656133323232373833303839370a3966306262633063343237633231646130376130396331613464356339363837
+  tasks:
+    - name: Create a user account
+      user:
+        name: "{{ user_name }}"
+        password: "{{ user_password }}"
+        state: present
+        shell: /bin/bash
+        groups: "sudo"
+
+    - name: Ensure the user has a home directory
+      file:
+        path: "/home/{{ user_name }}"
+        state: directory
+        owner: "{{ user_name }}"
+        group: "{{ user_name }}"
+        mode: '0755'
