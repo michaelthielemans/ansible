@@ -24,7 +24,7 @@
         modprobe br_netfilter
         
     - name: Download containerd with wget
-      command: wget -o /tmp https://github.com/containerd/containerd/releases/download/v1.7.15/containerd-1.7.15-linux-amd64.tar.gz
+      command: wget -o /tmp/containerd-1.7.15-linux-amd64.tar.gz https://github.com/containerd/containerd/releases/download/v1.7.15/containerd-1.7.15-linux-amd64.tar.gz
     
     #- name: Download containerd
     #  ansible.builtin.get_url:
