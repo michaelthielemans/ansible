@@ -1,0 +1,128 @@
+---
+- name: Run commands on target servers
+  hosts: all
+  become: yes
+  become_method: sudo
+  tasks:
+    
+    - name: Run a shell command
+      shell: |
+        sudo ufw allow 6443
+        sudo ufw reload
+
+    - name: Install a package
+      apt:
+        name:
+          - nfs-common
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gpg
+        state: present
+        update_cache: yes
+      when: ansible_os_family == "Debian"   
+
+    - name: Run a shell command
+      shell: |
+        cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+        net.ipv4.ip_forward = 1 EOF
+        sysctl --system
+        modprobe br_netfilter
+        
+    - name: Download containerd with wget
+      command: wget -o /usr/local/containerd-1.7.15-linux-amd64.tar.gz https://github.com/containerd/containerd/releases/download/v1.7.15/containerd-1.7.15-linux-amd64.tar.gz
+    
+    #- name: Download containerd
+    #  ansible.builtin.get_url:
+    #    url: https://github.com/containerd/containerd/releases/download/v1.7.15/containerd-1.7.15-linux-amd64.tar.gz
+    #    dest: /tmp/containerd
+    #    mode: '0777'
+    #    validate_certs: false
+     
+    - name: unpack the containerd package
+      command: tar Cxzvf /usr/local containerd-1.7.15-linux-amd64.tar.gz
+        
+    - name: download containerd service with wget
+      shell: |
+        cd /usr/lib/systemd/system
+        wget https://raw.githubusercontent.com/containerd/containerd/main/containerd.service
+    
+    #- name: download containerd service
+    #  get_url:
+    #    url: https://raw.githubusercontent.com/containerd/containerd/main/containerd.service
+    #    dest: /usr/lib/systemd/system/
+     
+    - name: reload the systemctl deamon and enable systemd
+      shell: systemctl daemon-reload
+     
+    - name: start en enable the containerd service
+      ansible.builtin.systemd_service:
+        name: containerd.service
+        enabled: true
+        state: started
+        
+    - name: download runc
+      command: wget -o /usr/local/runc.amd64 https://github.com/opencontainers/runc/releases/download/v1.1.12/runc.amd64
+
+    - name: install runc
+      shell: install -m 755 runc.amd64 /usr/local/sbin/runc
+
+    - name: Create containerd directory in /etc
+      file:
+        path: /etc/containerd
+        state: directory
+        mode: '0755'
+
+    - name: creat config.toml file
+      file:
+        path: /etc/containerd/config.toml
+        state: touch
+        mode: 777
+    
+    - name: generate default configuration for config.toml
+      shell: containerd config default > /etc/containerd/config.toml
+
+    - name: Ensure systemd_cgroup is set to true
+      lineinfile:
+        path: /etc/containerd/config.toml
+        regexp: '^systemd_cgroup ='
+        line: 'systemd_cgroup = true'
+        state: present
+
+    - name: restart containerd
+      ansible.builtin.systemd_service:
+        name: containerd.service
+        state: restarted
+        
+    - name: install cni plugin
+      shell: |
+        cd /opt
+        wget https://github.com/containernetworking/plugins/releases/download/v1.4.1/cni-plugins-linux-amd64-v1.4.1.tgz
+        mkdir -p /opt/cni/bin
+        chown root:root cni/bin
+        tar Cxzvf /opt/cni/bin cni-plugins-linux-amd64-v1.4.1.tgz
+        
+    - name: Add the repository key
+      shell: curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+    - name: Add the repository
+      shell: echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install packages
+      apt:
+        name:
+          - kubelet
+          - kubeadm
+          - kubectl
+        state: present
+
+    - name: start and enable the kubelet service
+      ansible.builtin.systemd_service:
+        name: kubelet
+        enabled: true
+        state: started
+    
