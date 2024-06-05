@@ -21,14 +21,16 @@
         wget "https://github.com/prometheus/node_exporter/releases/download/v1.8.1/node_exporter-1.8.1.linux-amd64.tar.gz"
   
     - name: Extract Node Exporter
-      command: tar xzf /usr/local/bin/node_exporter-1.8.1.linux-amd64.tar.gz
+      shell: |
+        cd /usr/local/bin
+        tar xzf /usr/local/bin/node_exporter-1.8.1.linux-amd64.tar.gz
 
     #- name: rename directory
     #  command: mv /usr/local/bin/node_exporter /usr/local/bin/node_exporter
 
     - name: Set permissions on Node Exporter binary
       file:
-        path: /usr/local/bin/node_exporter
+        path: /usr/local/bin/node_exporter-1.8.1.linux-amd64
         owner: "{{ node_exporter_user }}"
         group: "{{ node_exporter_group }}"
         mode: '0755'
@@ -46,7 +48,7 @@
           User={{ node_exporter_user }}
           Group={{ node_exporter_group }}
           Type=simple
-          ExecStart=/usr/local/bin/node_exporter
+          ExecStart=/usr/local/bin/node_exporter-1.8.1.linux-amd64
 
           [Install]
           WantedBy=multi-user.target
