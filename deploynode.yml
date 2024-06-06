@@ -1,5 +1,5 @@
 ---
-- name: Run commands on target servers
+- name: Prepare a node for joining a cluster
   hosts: all
   become: yes
   become_method: sudo
