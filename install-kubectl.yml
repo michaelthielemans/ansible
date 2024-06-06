@@ -1,0 +1,30 @@
+---
+- name: Install kubectl
+  hosts: all
+  become: yes
+  become_method: sudo
+  tasks:
+    
+  - name: Install a package
+    apt:
+      name:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gpg
+        state: present
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+  - name: Add the repository key
+    shell: curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+  - name: Add the repository
+    shell: echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+  - name: install kubectl package
+    apt:
+      name: kubectl
+      state: present
+      update_cache: yes
+    when: ansible_os_family == "Debian"
