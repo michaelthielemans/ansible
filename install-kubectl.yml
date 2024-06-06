@@ -11,9 +11,9 @@
           - ca-certificates
           - curl
           - gpg
-          state: present
-          update_cache: yes
-        when: ansible_os_family == "Debian"
+        state: present
+        update_cache: yes
+      when: ansible_os_family == "Debian"
 
     - name: Add the repository key
       shell: curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
