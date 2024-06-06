@@ -1,4 +1,3 @@
----
 - name: Install kubectl
   hosts: all
   become: yes
