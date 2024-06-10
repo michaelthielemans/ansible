@@ -1,4 +1,4 @@
-- name: test
+- name: Install HTOP
   hosts: all
   become: yes
   tasks:
