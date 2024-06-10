@@ -15,6 +15,7 @@
         name: htop
         update_cache: yes
 
+
     # Check if reboot is required
     - name: check if system reboot is required
       become: true
