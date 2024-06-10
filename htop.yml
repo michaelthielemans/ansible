@@ -1,4 +1,4 @@
-- name: test
+- name: Install HTOP
   hosts: all
   become: yes
   tasks:
@@ -14,6 +14,7 @@
       ansible.builtin.apt:
         name: htop
         update_cache: yes
+
 
     # Check if reboot is required
     - name: check if system reboot is required
