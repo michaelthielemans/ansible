@@ -1,4 +1,4 @@
-- name: test
+- name: test all connections
   hosts: all
   tasks:
     - name: Run hostname command
